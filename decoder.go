@@ -106,6 +106,15 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 		// Treat value data without type identifier as string
 		if t, ok := tok.(xml.CharData); ok {
 			if value := strings.TrimSpace(string(t)); value != "" {
+
+				// Add a case when val is an interface. It should be able to set with string
+				if checkType(val, reflect.Interface) == nil && val.IsNil() {
+					pi := reflect.New(reflect.TypeOf(value)).Elem()
+					pi.SetString(value)
+					val.Set(pi)
+					return nil
+				}
+
 				if err = checkType(val, reflect.String); err != nil {
 					return err
 				}

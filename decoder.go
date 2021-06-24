@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 const (
@@ -37,6 +38,14 @@ type decoder struct {
 }
 
 func unmarshal(data []byte, v interface{}) (err error) {
+	// Remove illegal char codes before decoding
+	printOnly := func(r rune) rune {
+		if unicode.IsPrint(r) {
+			return r
+		}
+		return -1
+	}
+	data = []byte(strings.Map(printOnly, string(data)))
 	dec := &decoder{xml.NewDecoder(bytes.NewBuffer(data))}
 
 	if CharsetReader != nil {

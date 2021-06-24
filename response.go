@@ -35,6 +35,7 @@ func (r Response) Err() error {
 
 func (r Response) Unmarshal(v interface{}) error {
 	if err := unmarshal(r, v); err != nil {
+		fmt.Println("Unable to unmarshal: " + string(r))
 		return err
 	}
 
